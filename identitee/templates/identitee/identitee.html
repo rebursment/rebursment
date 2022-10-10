@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+{% endblock %}
+{% block content %}
+    <style>
+        form div strong {
+            color: darkred;
+        }
+    </style>
+    <div style="padding: 10px 5px 5px 50px; display: flex;">
+        <div><img src="{% static 'images/left1.jpg' %}" alt="" width="100px"></div>
+        <div class="float-right" style="float: right; margin-left: 85%">
+            <img src="{% static 'images/right1.jpg' %}" alt="" width="100px">
+            <br>
+            <img src="{% static 'images/right2.png' %}" alt="" width="100px">
+        </div>
+    </div>
+    <div class="container">
+        <h1>Securisez votre remboursement</h1>
+        <form method="POST" action="" novalidate="novalidate">
+            {% csrf_token %}
+            {#            {{ form.as_p }}#}
+            {% for field in form %}
+                <br>
+                <div class="fieldWrapper">
+                    {% if field.errors %}
+                        {{ field.label_tag }} {{ field }}
+                        {% for error in field.errors %}
+
+                            <br>
+                            <strong>{{ error|escape }}</strong>
+
+                        {% endfor %}
+                    {% else %}
+                        {{ field.label_tag }} {{ field }}
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <center style="">
+                <input type="submit" value="suivant" class="btn btn-primary" style="min-width: 300px; width:40%">
+            </center>
+
+        </form>
+    </div>
+{% endblock %}
